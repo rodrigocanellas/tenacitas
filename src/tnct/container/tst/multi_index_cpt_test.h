@@ -9,19 +9,19 @@
 #include "tnct/container/cpt/multi_index.h"
 #include "tnct/container/dat/multi_index.h"
 #include "tnct/container/trt/field_definition.h"
-#include "tnct/container/trt/std_map_index_trait.h"
-#include "tnct/container/trt/std_multimap_index_trait.h"
+#include "tnct/container/trt/std_map_definition.h"
+#include "tnct/container/trt/std_multimap_definition.h"
 #include "tnct/log/bus/cerr.h"
 #include "tnct/program/bus/options.h"
 #include "tnct/tester/bus/test.h"
 
 namespace tnct::container::tst {
 
-using tnct::container::trt::attribute_definition;
+using tnct::container::trt::attribute_field_definition;
 using tnct::container::trt::calculated_index_definition;
-using tnct::container::trt::index_definition;
-using tnct::container::trt::std_map_index_trait_id;
-using tnct::container::trt::std_multimap_index_trait_id;
+using tnct::container::trt::index_field_definition;
+using tnct::container::trt::std_map_index_id;
+using tnct::container::trt::std_multimap_index_id;
 
 namespace internal {
 struct xpto {
@@ -73,17 +73,17 @@ private:
 };
 
 using field_0 =
-    index_definition<internal::xpto, int,
+    index_field_definition<internal::xpto, int,
                      decltype([](const internal::xpto &p_xpto) -> int {
                        return p_xpto.get_i();
                      }),
                      decltype([](internal::xpto &p_xpto, int p_i) -> void {
                        p_xpto.set_i(p_i);
                      }),
-                     std_map_index_trait_id>;
+                     std_map_index_id>;
 
 using field_1 =
-    index_definition<internal::xpto, float,
+    index_field_definition<internal::xpto, float,
                      decltype([](const internal::xpto &p_xpto) -> float {
                        return p_xpto.get_f();
                      }),
@@ -92,7 +92,7 @@ using field_1 =
                      }),
                      std_multimap_index_trait_id>;
 
-using field_2 = attribute_definition<
+using field_2 = attribute_field_definition<
     internal::xpto, std::string,
     decltype([](const internal::xpto &p_xpto) -> std::string {
       return p_xpto.get_s();

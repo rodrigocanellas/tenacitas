@@ -8,8 +8,6 @@
 
 #include <functional>
 #include <iostream>
-#include <iterator>
-#include <list>
 #include <mutex>
 #include <optional>
 #include <ostream>
@@ -17,8 +15,11 @@
 #include <utility>
 
 #include "tnct/container/cpt/field_definition.h"
+#include "tnct/container/cpt/index_definition.h"
+#include "tnct/container/dat/chuncked_container.h"
 #include "tnct/container/trt/fields_definitions_are_compatible.h"
-#include "tnct/container/trt/no_index_trait.h"
+#include "tnct/container/trt/index_id_has_index_definition.h"
+#include "tnct/container/trt/no_index_definition.h"
 #include "tnct/tuple/bus/traverse.h"
 #include "tnct/tuple/cpt/is_tuple.h"
 
@@ -36,8 +37,8 @@ namespace tnct::container::dat {
 /// so it is up to the user to check if the reference to the
 /// std::optional<t_object> that is retrieved is actually valid
 ///
-/// \details You can use the tnct::container::trt::attribute_definition,
-/// tnct::container::trt::index_definition and
+/// \details You can use the tnct::container::trt::attribute_field_definition,
+/// tnct::container::trt::index_field_definition and
 /// tnct::container::trt::calculated_index_definition to define the fields used
 /// in \p multi_index_t
 ///
@@ -51,7 +52,7 @@ namespace tnct::container::dat {
 /// \example tnct/container/exp/multi_index/main.cpp
 template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
-class multi_index_t final {
+class multi_index final {
 
 public:
   using fields_definitions = std::tuple<t_fields_definitions...>;
@@ -60,28 +61,30 @@ public:
   using object =
       typename std::tuple_element_t<0, fields_definitions>::object_type;
 
-  /// An \p std::optional is actually multi indexed to allow check if the \p
-  /// object is valid
-  using optional = std::optional<object>;
-
-  /// This class gives acess to the \p std::optional<record>
+  /// This class gives acess to a const object
   struct record;
 
   /// Actually it is a reference to the \p record
-  using record_ref = std::reference_wrapper<record>;
+  using rec_opt_ref = std::reference_wrapper<std::optional<record>>;
+
+  // static_assert(
+  //     container::trt::index_id_has_index_definition_v<rec_opt_ref,
+  //                                                     t_fields_definitions...>,
+  //     "At least one 'index_id' in one of the 'cpt::field_definition' does not
+  //     " "have a 'trt::index_definition' associated or is wrongly defined");
 
   /// Type of the \p t_field_pos-th field
   template <std::size_t t_field_pos>
-  using field_t = typename std::tuple_element_t<t_field_pos,
-                                                fields_definitions>::field_type;
+  using field_type =
+      typename std::tuple_element_t<t_field_pos,
+                                    fields_definitions>::field_type;
 
-public:
   /// Allows controlled access to the \p std::optional that contains (or not)
   /// the object being multi indexed
   struct record final {
-    friend class multi_index_t;
+    friend multi_index;
 
-    record() = delete;
+    record() = default;
 
     record(const record &) = delete;
     record &operator=(const record &) = delete;
@@ -92,20 +95,14 @@ public:
     void *operator new(std::size_t) = delete;
     void *operator new[](std::size_t) = delete;
 
-    const optional &get_optional() const { return m_optional; }
+    const object &get_object() const { return m_object; }
 
     constexpr bool operator<(const record &p_record) const {
-      return (m_optional.has_value()
-                  ? m_optional.value() < p_record.m_optional.value()
-                  : false);
+      return m_object < p_record.m_object;
     }
 
     friend std::ostream &operator<<(std::ostream &p_out,
                                     const record &p_record) {
-
-      if (!p_record.m_optional.has_value()) {
-        return p_out;
-      }
 
       auto _visit = [&]<tuple::cpt::is_tuple t_tuple, std::size_t t_index>(
                         const t_tuple &p_tuple) {
@@ -115,7 +112,7 @@ public:
         return true;
       };
 
-      p_out << "[ " << p_record.m_optional.value() << " ( ";
+      p_out << "[ " << p_record.m_object << " ( ";
 
       tuple::bus::traverse<index_iterators, decltype(_visit)>(
           p_record.m_index_iterators, _visit);
@@ -126,13 +123,13 @@ public:
 
   private:
     using index_iterators =
-        std::tuple<std::optional<typename container::trt::index_traits<
-            typename t_fields_definitions::index_traits_id,
+        std::tuple<std::optional<typename container::trt::index_definition<
+            typename t_fields_definitions::index_id,
             typename t_fields_definitions::field_type,
-            record_ref>::iterator>...>;
+            rec_opt_ref>::index_type::iterator>...>;
 
     template <std::size_t t_field_pos>
-    using index_iterator_t = std::tuple_element_t<t_field_pos, index_iterators>;
+    using index_iterator = std::tuple_element_t<t_field_pos, index_iterators>;
 
   private:
     record(object &&p_object);
@@ -142,46 +139,59 @@ public:
     }
 
     template <std::size_t t_index_pos>
-    void set_index_iterator(index_iterator_t<t_index_pos> p_iterator) {
+    void set_index_iterator(index_iterator<t_index_pos> p_iterator) {
       std::get<t_index_pos>(m_index_iterators) = p_iterator;
     }
 
-    optional &get_internal_optional() { return m_optional; }
+    object &get_mutable_object() { return m_object; }
 
     index_iterators &get_index_iterators() { return m_index_iterators; }
 
     void reset_index_iterators();
 
     template <std::size_t t_field_pos> static constexpr bool is_iterator() {
-      return !std::is_same_v<
-          typename std::tuple_element_t<
-              t_field_pos, typename record::index_iterators>::value_type,
-          trt::no_iterator_type>;
+      return !std::is_same_v<trt::no_index_id,
+                             typename std::tuple_element_t<
+                                 t_field_pos, fields_definitions>::index_id>;
+      // return !std::is_same_v<
+      //     typename std::tuple_element_t<
+      //         t_field_pos, typename record::index_iterators>::value_type,
+      //          trt::index_definition<trt::no_index_id,
+      //          std::get<t_field_pos>(no_iterator_type>;
+    }
+
+    template <std::size_t t_index_pos>
+    bool get_field(const field_type<t_index_pos> &p_field) const {
+      if (std::get<t_index_pos>(m_index_iterators).has_value()) {
+        return std::get<t_index_pos>(m_index_iterators).value()->first ==
+               p_field;
+      }
+      return false;
     }
 
   private:
-    optional m_optional;
-    index_iterators m_index_iterators;
+    object m_object{};
+    index_iterators m_index_iterators{};
   };
 
   // end of \p record class
 
-  multi_index_t() = default;
+  multi_index() = default;
 
-  multi_index_t(const multi_index_t &) = delete;
-  multi_index_t(multi_index_t &&) = delete;
+  multi_index(const multi_index &) = delete;
+  multi_index(multi_index &&) = delete;
 
-  ~multi_index_t() = default;
+  ~multi_index() = default;
 
-  multi_index_t &operator=(const multi_index_t &) = delete;
-  multi_index_t &operator=(multi_index_t &&) = delete;
+  multi_index &operator=(const multi_index &) = delete;
+  multi_index &operator=(multi_index &&) = delete;
 
   void *operator new(std::size_t) = delete;
   void operator delete(void *) = delete;
 
   /// Adds a \p object and returns a std::optional reference with (or not) a
   /// reference to the record
-  std::optional<record_ref> add(object &&p_object);
+  std::optional<rec_opt_ref> add(object &&p_object);
 
   /// Retrieves a collection of references to \p record
   ///
@@ -199,7 +209,7 @@ public:
   /// allow repetition, the number of references to \p record in the return is
   /// at most 1
   template <std::size_t t_field_pos>
-  std::vector<record_ref> get(const field_t<t_field_pos> &p_field);
+  std::vector<rec_opt_ref> get(const field_type<t_field_pos> &p_field);
 
   /// Erase all the references to \p record that have a certain field value
   ///
@@ -208,24 +218,26 @@ public:
   ///
   /// \param p_field is the value of the field to be used as comparision
   template <std::size_t t_field_pos>
-  void erase(const field_t<t_field_pos> &p_field);
+  void erase(const field_type<t_field_pos> &p_field);
 
   /// Updates a certain field of a record
   ///
   /// \tparam t_field_pos is the field used to retrieve the references to \p
   /// record
   ///
-  /// \param p_record_ref is a reference to the \p record being modified
+  /// \param p_rec_opt_ref is a reference to the \p record being
+  /// modified
   ///
   /// \param p_field is the new value of the field
   ///
   /// \note if there is an index associated to t_field_pos, the entry in the
   /// index will be updated
   template <std::size_t t_field_pos>
-  bool update(record_ref p_record_ref, const field_t<t_field_pos> &p_field);
+  bool update(rec_opt_ref p_rec_opt_ref,
+              const field_type<t_field_pos> &p_field);
 
   friend std::ostream &operator<<(std::ostream &p_out,
-                                  const multi_index_t &p_multi_index) {
+                                  const multi_index &p_multi_index) {
 
     {
       std::cout << "\nobjects:\n";
@@ -243,8 +255,8 @@ public:
       p_out << "\nindexes:\n";
       auto _visitor = [&]<tuple::cpt::is_tuple t_tuple, size_t t_index_pos>(
                           const t_tuple &p_indexes) {
-        if constexpr (is_index<t_index_pos>()) {
-          const multi_index_t::index_t<t_index_pos> &_index{
+        if constexpr (is_field_an_index<t_index_pos>()) {
+          const multi_index::index_t<t_index_pos> &_index{
               std::get<t_index_pos>(p_indexes)};
 
           std::cout << "index " << t_index_pos << " - ";
@@ -261,7 +273,7 @@ public:
         }
         return true;
       };
-      tuple::bus::traverse<multi_index_t::indexes, decltype(_visitor)>(
+      tuple::bus::traverse<multi_index::indexes, decltype(_visitor)>(
           p_multi_index.m_indexes, _visitor);
     }
 
@@ -271,13 +283,16 @@ public:
 private:
   /// \todo this will be replaced with something like
   /// std::list<std::array<object,N>>
-  using table = std::list<record>;
+  //  using table = std::list<record>;
+  using table = container::dat::chunked_container<record, 100>;
   using table_iterator = typename table::iterator;
+  using table_element = typename table::element;
+  using table_type = typename table::type;
 
 private:
-  using indexes = std::tuple<typename container::trt::index_traits<
-      typename t_fields_definitions::index_traits_id,
-      typename t_fields_definitions::field_type, record_ref>::index...>;
+  using indexes = std::tuple<typename container::trt::index_definition<
+      typename t_fields_definitions::index_id,
+      typename t_fields_definitions::field_type, rec_opt_ref>::index_type...>;
 
   template <std::size_t t_field_pos>
   using index_t = std::tuple_element_t<t_field_pos, indexes>;
@@ -293,42 +308,44 @@ private:
                                     fields_definitions>::field_setter;
 
 private:
-  template <std::size_t t_field_pos> static constexpr bool is_index() {
-    return !std::is_same_v<std::tuple_element_t<t_field_pos, indexes>,
-                           trt::no_index_type>;
+  template <std::size_t t_field_pos> static constexpr bool is_field_an_index() {
+    return !std::is_same_v<trt::no_index_id,
+                           typename std::tuple_element_t<
+                               t_field_pos, fields_definitions>::index_id>;
   }
 
   template <std::size_t t_field_pos>
-  static constexpr bool is_calculated_index() {
-    return is_index<t_field_pos> &&
+  static constexpr bool is_field_a_calculated_index() {
+    return is_field_an_index<t_field_pos> &&
            std::tuple_element_t<t_field_pos, fields_definitions>::is_calculated;
   }
 
   template <std::size_t t_field_pos>
-  bool update_index(record_ref p_record_ref,
-                    const field_t<t_field_pos> &p_field);
+  bool update_index(rec_opt_ref p_rec_opt_ref,
+                    const field_type<t_field_pos> &p_field);
 
-  bool update_calculated_indexes(record_ref p_record_ref);
-
-  template <std::size_t t_field_pos>
-  void erase_by_index(const field_t<t_field_pos> &p_field);
+  bool update_calculated_indexes(rec_opt_ref p_rec_opt_ref);
 
   template <std::size_t t_field_pos>
-  void erase_by_field(const field_t<t_field_pos> &p_field);
+  void erase_by_index(const field_type<t_field_pos> &p_field);
 
   template <std::size_t t_field_pos>
-  std::vector<record_ref> get_by_index(const field_t<t_field_pos> &p_field);
+  void erase_by_field(const field_type<t_field_pos> &p_field);
 
   template <std::size_t t_field_pos>
-  std::vector<record_ref> get_by_field(const field_t<t_field_pos> &p_field);
+  std::vector<rec_opt_ref> get_by_index(const field_type<t_field_pos> &p_field);
+
+  template <std::size_t t_field_pos>
+  std::vector<rec_opt_ref>
+  get_by_attribute(const field_type<t_field_pos> &p_field);
 
   void erase_indexes(typename record::index_iterators &p_index_iterators);
 
-  void erase_record(record_ref p_record_ref);
+  void erase_record(rec_opt_ref p_rec_opt_ref);
 
 private:
-  table m_table;
-  indexes m_indexes;
+  table m_table{record{}};
+  indexes m_indexes{};
   std::mutex m_mutex;
 };
 
@@ -337,36 +354,36 @@ private:
 // #############################################################################
 template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
-std::optional<typename multi_index_t<t_fields_definitions...>::record_ref>
-multi_index_t<t_fields_definitions...>::
+std::optional<typename multi_index<t_fields_definitions...>::rec_opt_ref>
+multi_index<t_fields_definitions...>::
 
-    add(typename multi_index_t<t_fields_definitions...>::object &&p_object) {
+    add(typename multi_index<t_fields_definitions...>::object &&p_object) {
 
   std::lock_guard<std::mutex> _lock{m_mutex};
 
-  m_table.push_back({std::move(p_object)});
+  record _record{std::move(p_object)};
 
-  record_ref _record_ref{*std::prev(m_table.end())};
+  rec_opt_ref _rec_opt_ref{m_table.add(std::move(_record))};
 
   bool _error{false};
   auto _visitor{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_field_pos>() {
-    if constexpr (is_index<t_field_pos>()) {
+    if constexpr (is_field_an_index<t_field_pos>()) {
       using index = index_t<t_field_pos>;
       using index_iterator =
-          typename record::template index_iterator_t<t_field_pos>;
-      using field = field_t<t_field_pos>;
+          typename record::template index_iterator<t_field_pos>;
+      using field = field_type<t_field_pos>;
       using field_getter = field_getter_t<t_field_pos>;
 
       index &_index{std::get<t_field_pos>(m_indexes)};
 
       const field _field{
-          field_getter{}(_record_ref.get().get_optional().value())};
+          field_getter{}(_rec_opt_ref.get().get_optional().value())};
 
       std::pair<typename index_iterator::value_type, bool> _res{
-          _index.emplace(_field, _record_ref)};
+          _index.emplace(_field, _rec_opt_ref)};
       if (_res.second) {
         // index creation ok
-        _record_ref.get().template set_index_iterator<t_field_pos>(
+        _rec_opt_ref.get().template set_index_iterator<t_field_pos>(
             {_res.first});
       } else {
         // index creation not ok
@@ -380,30 +397,30 @@ multi_index_t<t_fields_definitions...>::
   tuple::bus::traverse<indexes, decltype(_visitor)>(_visitor);
 
   if (_error) {
-    erase_record(_record_ref);
+    erase_record(_rec_opt_ref);
     return std::nullopt;
   }
-  return {_record_ref};
+  return {_rec_opt_ref};
 }
 
 template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-std::vector<typename multi_index_t<t_fields_definitions...>::record_ref>
-multi_index_t<t_fields_definitions...>::
+std::vector<typename multi_index<t_fields_definitions...>::rec_opt_ref>
+multi_index<t_fields_definitions...>::
 
-    get(const field_t<t_field_pos> &p_field) {
+    get(const field_type<t_field_pos> &p_field) {
 
-  std::vector<record_ref> _res;
-  if constexpr (is_index<t_field_pos>()) {
+  std::vector<rec_opt_ref> _res;
+  if constexpr (is_field_an_index<t_field_pos>()) {
     _res = get_by_index<t_field_pos>(p_field);
   } else {
-    _res = get_by_field<t_field_pos>(p_field);
+    _res = get_by_attribute<t_field_pos>(p_field);
   }
   if (!_res.empty()) {
     std::sort(_res.begin(), _res.end(),
-              [&](const record_ref &p_1, const record_ref &p_2) {
-                return p_1.get() < p_2.get();
+              [&](const rec_opt_ref &p_1, const rec_opt_ref &p_2) {
+                return p_1.get().value() < p_2.get().value();
               });
   }
 
@@ -413,11 +430,12 @@ multi_index_t<t_fields_definitions...>::
 template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-void multi_index_t<t_fields_definitions...>::
+void multi_index<t_fields_definitions...>::
 
-    erase(const field_t<t_field_pos> &p_field) {
+    erase(const field_type<t_field_pos> &p_field) {
+
   std::lock_guard<std::mutex> _lock{m_mutex};
-  if constexpr (is_index<t_field_pos>()) {
+  if constexpr (is_field_an_index<t_field_pos>()) {
     erase_by_index<t_field_pos>(p_field);
   } else {
     erase_by_field<t_field_pos>(p_field);
@@ -427,35 +445,39 @@ void multi_index_t<t_fields_definitions...>::
 template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-bool multi_index_t<t_fields_definitions...>::
+bool multi_index<t_fields_definitions...>::
 
-    update(record_ref p_record_ref, const field_t<t_field_pos> &p_field) {
+    update(rec_opt_ref p_rec_opt_ref, const field_type<t_field_pos> &p_field) {
 
-  if (!p_record_ref.get().get_optional().has_value()) {
+  if (!p_rec_opt_ref.get().has_value()) {
     return false;
   }
 
   std::lock_guard<std::mutex> _lock{m_mutex};
 
   bool _ok{true};
-  if constexpr (is_index<t_field_pos>()) {
-    _ok = update_index<t_field_pos>(p_record_ref, p_field);
+  if constexpr (is_field_an_index<t_field_pos>()) {
+    _ok = update_index<t_field_pos>(p_rec_opt_ref, p_field);
   } else {
     field_setter_t<t_field_pos>{}(
-        p_record_ref.get().get_internal_optional().value(), p_field);
+        p_rec_opt_ref.get().value().get_mutable_object(), p_field);
   }
 
-  return (!_ok ? _ok : update_calculated_indexes(p_record_ref));
+  return (!_ok ? _ok : update_calculated_indexes(p_rec_opt_ref));
 }
 
 template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-bool multi_index_t<t_fields_definitions...>::
+bool multi_index<t_fields_definitions...>::
 
-    update_index(record_ref p_record_ref, const field_t<t_field_pos> &p_field) {
+    update_index(rec_opt_ref p_rec_opt_ref,
+                 const field_type<t_field_pos> &p_field) {
 
-  record &_record = p_record_ref.get();
+  if (!p_rec_opt_ref.get().has_value()) {
+    return false;
+  }
+  record &_record = p_rec_opt_ref.get().value();
 
   typename record::index_iterators &_index_iterators =
       _record.get_index_iterators();
@@ -463,13 +485,13 @@ bool multi_index_t<t_fields_definitions...>::
   index_t<t_field_pos> &_index = std::get<t_field_pos>(m_indexes);
 
   if (std::get<t_field_pos>(_index_iterators).value()->first != p_field) {
-    auto [_new_ite, _inserted] = _index.emplace(p_field, p_record_ref);
+    auto [_new_ite, _inserted] = _index.emplace(p_field, p_rec_opt_ref);
 
     if (!_inserted) {
       return false;
     }
 
-    object &_object = _record.get_internal_optional().value();
+    object &_object = _record.get_mutable_object();
 
     _index.erase(std::get<t_field_pos>(_index_iterators).value());
 
@@ -483,18 +505,21 @@ bool multi_index_t<t_fields_definitions...>::
 
 template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
-bool multi_index_t<t_fields_definitions...>::
+bool multi_index<t_fields_definitions...>::
 
-    update_calculated_indexes(record_ref p_record_ref) {
+    update_calculated_indexes(rec_opt_ref p_rec_opt_ref) {
+
+  if (!p_rec_opt_ref.get().has_value()) {
+    return false;
+  }
+
   bool _ok{true};
   auto _visit{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_pos>() {
-    if constexpr (is_calculated_index<t_pos>()) {
+    if constexpr (is_field_a_calculated_index<t_pos>()) {
       using field_getter = field_getter_t<t_pos>;
       field_getter _field_getter;
-      if (!update_index<t_pos>(
-              p_record_ref.get(),
-              _field_getter(
-                  p_record_ref.get().get_internal_optional().value()))) {
+      object &_object{p_rec_opt_ref.get().value().get_mutable_object()};
+      if (!update_index<t_pos>(p_rec_opt_ref, _field_getter(_object))) {
         _ok = false;
         return false;
       }
@@ -511,15 +536,16 @@ bool multi_index_t<t_fields_definitions...>::
 template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-void multi_index_t<t_fields_definitions...>::
+void multi_index<t_fields_definitions...>::
 
-    erase_by_index(const field_t<t_field_pos> &p_field) {
-  if constexpr (is_index<t_field_pos>()) {
+    erase_by_index(const field_type<t_field_pos> &p_field) {
+
+  if constexpr (is_field_an_index<t_field_pos>()) {
     using index = index_t<t_field_pos>;
 
     index &_index{std::get<t_field_pos>(m_indexes)};
     using index_iterator =
-        typename record::template index_iterator_t<t_field_pos>;
+        typename record::template index_iterator<t_field_pos>;
 
     std::pair<typename index_iterator::value_type, index_iterator> _range{
         _index.equal_range(p_field)};
@@ -543,39 +569,47 @@ void multi_index_t<t_fields_definitions...>::
 template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-void multi_index_t<t_fields_definitions...>::
+void multi_index<t_fields_definitions...>::
 
-    erase_by_field(const field_t<t_field_pos> &p_field) {
+    erase_by_field(const field_type<t_field_pos> &p_field) {
+
   using field_getter = field_getter_t<t_field_pos>;
-  for (record &_record : m_table) {
-    if (optional & _optional{_record.get_internal_optional()};
-        _optional.has_value() &&
-        (p_field == field_getter{}(_optional.value()))) {
-      erase_record(_record);
+
+  for (table_element &_table_element : m_table) {
+    if (_table_element.has_value()) {
+      table_type &_record{_table_element.value()};
+      if (p_field == field_getter{}(_record)) {
+        erase_record(_record);
+      }
     }
   }
 }
 
 template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
-void multi_index_t<t_fields_definitions...>::
+void multi_index<t_fields_definitions...>::
 
-    erase_record(record_ref p_record_ref) {
-  erase_indexes(p_record_ref.get().get_index_iterators());
-  p_record_ref.get().reset_index_iterators();
-  p_record_ref.get().get_internal_optional().reset();
+    erase_record(rec_opt_ref p_rec_opt_ref) {
+
+  if (p_rec_opt_ref.get().has_value()) {
+    rec_opt_ref &_rec_opt_ref{p_rec_opt_ref.get().value()};
+    erase_indexes(_rec_opt_ref.get_index_iterators());
+    _rec_opt_ref.reset_index_iterators();
+    _rec_opt_ref.get_mutable_object().reset();
+  }
 }
 
 template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
-void multi_index_t<t_fields_definitions...>::
+void multi_index<t_fields_definitions...>::
 
     erase_indexes(typename record::index_iterators &p_index_iterators) {
-  auto _visit{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_pos>() {
-    if constexpr (is_index<t_pos>()) {
+
+  auto _visit{[&]<tuple::cpt::is_tuple t_index_iterators, std::size_t t_pos>() {
+    if constexpr (is_field_an_index<t_pos>()) {
 
       using index = index_t<t_pos>;
-      using index_iterator = typename record::template index_iterator_t<t_pos>;
+      using index_iterator = typename record::template index_iterator<t_pos>;
 
       index &_index{std::get<t_pos>(m_indexes)};
       index_iterator _index_iterator{std::get<t_pos>(p_index_iterators)};
@@ -594,16 +628,19 @@ void multi_index_t<t_fields_definitions...>::
 template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-std::vector<typename multi_index_t<t_fields_definitions...>::record_ref>
-multi_index_t<t_fields_definitions...>::
+std::vector<typename multi_index<t_fields_definitions...>::rec_opt_ref>
+multi_index<t_fields_definitions...>::
 
-    get_by_field(const field_t<t_field_pos> &p_field) {
-  std::vector<record_ref> _res;
-  for (record &_record : m_table) {
-    if (const optional & _optional{_record.get_optional()};
-        _optional.has_value() &&
-        (p_field == field_getter_t<t_field_pos>{}(_optional.value()))) {
-      _res.push_back(record_ref{_record});
+    get_by_attribute(const field_type<t_field_pos> &p_field) {
+
+  std::vector<rec_opt_ref> _res;
+  for (table_element &_table_element : m_table) {
+    if (_table_element.has_value()) {
+      field_getter_t<t_field_pos> _field_getter;
+      record &_record{_table_element.value()};
+      if (p_field == _field_getter(_record)) {
+        _res.push_back(rec_opt_ref{_table_element});
+      }
     }
   }
   return _res;
@@ -612,47 +649,46 @@ multi_index_t<t_fields_definitions...>::
 template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-std::vector<typename multi_index_t<t_fields_definitions...>::record_ref>
-multi_index_t<t_fields_definitions...>::
+std::vector<typename multi_index<t_fields_definitions...>::rec_opt_ref>
+multi_index<t_fields_definitions...>::
 
-    get_by_index(const field_t<t_field_pos> &p_field) {
+    get_by_index(const field_type<t_field_pos> &p_field) {
+
   using index = index_t<t_field_pos>;
-  using index_iterator =
-      typename record::template index_iterator_t<t_field_pos>;
+  using index_iterator = typename record::template index_iterator<t_field_pos>;
 
-  std::vector<record_ref> _res;
+  std::vector<rec_opt_ref> _res;
 
   index &_index{std::get<t_field_pos>(m_indexes)};
 
-  std::pair<typename index_iterator::value_type, index_iterator> _range{
-      _index.equal_range(p_field)};
+  std::pair<index_iterator, index_iterator> _range{_index.equal_range(p_field)};
 
-  for (typename index_iterator::value_type _ite{_range.first};
-       _ite != _range.second; ++_ite) {
-    if (_ite->second.get().get_optional().has_value())
-      _res.push_back(record_ref{_ite->second.get()});
+  for (index_iterator _ite{_range.first}; _ite != _range.second; ++_ite) {
+    rec_opt_ref &_rec_opt_ref{_ite->second};
+    if (_rec_opt_ref.get().has_value()) {
+      _res.push_back(_rec_opt_ref);
+    }
+    return _res;
   }
-  return _res;
 }
 
 template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
-multi_index_t<t_fields_definitions...>::record::record(
-    typename multi_index_t<t_fields_definitions...>::object &&p_object)
-    : m_optional{std::move(p_object)} {
+multi_index<t_fields_definitions...>::record::record(
+    typename multi_index<t_fields_definitions...>::object &&p_object)
+    : m_object{std::move(p_object)} {
   reset_index_iterators();
 }
 
 template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
-void multi_index_t<t_fields_definitions...>::record::reset_index_iterators() {
+void multi_index<t_fields_definitions...>::record::reset_index_iterators() {
   auto _visit{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_pos>() {
-    if constexpr (is_index<t_pos>()) {
+    if constexpr (is_field_an_index<t_pos>()) {
       // using index = index_t<t_pos>;
 
       // index &_index{std::get<t_pos>(m_indexes.get())};
       std::get<t_pos>(m_index_iterators) = std::nullopt;
-      ;
     }
     return true;
   }};

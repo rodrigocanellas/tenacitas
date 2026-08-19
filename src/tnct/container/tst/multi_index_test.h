@@ -16,8 +16,8 @@
 
 #include "tnct/container/dat/multi_index.h"
 #include "tnct/container/trt/field_definition.h"
-#include "tnct/container/trt/std_map_index_trait.h"
-#include "tnct/container/trt/std_multimap_index_trait.h"
+#include "tnct/container/trt/std_map_definition.h"
+#include "tnct/container/trt/std_multimap_definition.h"
 #include "tnct/format/bus/fmt.h"
 #include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
@@ -74,20 +74,20 @@ private:
   std::string m_name;
 };
 
-using tnct::container::trt::attribute_definition;
+using tnct::container::trt::attribute_field_definition;
 using tnct::container::trt::calculated_index_definition;
-using tnct::container::trt::index_definition;
-using tnct::container::trt::std_map_index_trait_id;
+using tnct::container::trt::index_field_definition;
+using tnct::container::trt::std_map_index_id;
 using tnct::container::trt::std_multimap_index_trait_id;
 
-using id_field = index_definition<
+using id_field = index_field_definition<
     object, int,
     decltype([](const object &p_object) -> int { return p_object.get_id(); }),
     decltype([](object &p_object, int p_id) -> void { p_object.set_id(p_id); }),
-    std_map_index_trait_id>;
+    std_map_index_id>;
 
 using score_field =
-    index_definition<object, float,
+    index_field_definition<object, float,
                      decltype([](const object &p_object) -> float {
                        return p_object.get_score();
                      }),
@@ -96,7 +96,7 @@ using score_field =
                      }),
                      std_multimap_index_trait_id>;
 
-using name_field = attribute_definition<
+using name_field = attribute_field_definition<
     object, std::string, decltype([](const object &p_object) -> std::string {
       return p_object.get_name();
     }),

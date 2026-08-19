@@ -21,6 +21,8 @@ concept index = requires(
   typename t::iterator;
   typename t::const_iterator;
 
+  requires std::same_as<std::remove_cv_t<decltype(t::is_unique)>, bool>;
+
   requires std::same_as<typename t::value_type,
                         std::pair<const std::remove_cvref_t<typename t::key>,
                                   typename t::mapped_key>>;

@@ -3,16 +3,16 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_CONTAINER_TRT_STD_MULTIMAP_INDEX_TRAIT_H
-#define TNCT_CONTAINER_TRT_STD_MULTIMAP_INDEX_TRAIT_H
+#ifndef TNCT_CONTAINER_TRT_STD_MULTIMAP_DESCRIPTION_H
+#define TNCT_CONTAINER_TRT_STD_MULTIMAP_DESCRIPTION_H
 
 #include <map>
 
-#include "tnct/container/trt/index_traits.h"
+#include "tnct/container/trt/index_definition.h"
 
 namespace tnct::container::trt {
 
-class std_multimap_index_trait_id {};
+class std_multimap_index_id {};
 
 template <typename t_key, typename t_ref> class std_multimap_index {
 private:
@@ -59,9 +59,8 @@ private:
 };
 
 template <typename t_key, typename t_value>
-struct index_traits<std_multimap_index_trait_id, t_key, t_value> {
-  using index = std_multimap_index<t_key, t_value>;
-  using iterator = index::iterator;
+struct index_definition<std_multimap_index_id, t_key, t_value> {
+  using index_type = std_multimap_index<t_key, t_value>;
   static constexpr bool unique = false;
 };
 

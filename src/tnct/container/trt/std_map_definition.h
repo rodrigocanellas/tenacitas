@@ -3,21 +3,20 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_CONTAINER_TRT_STD_MAP_INDEX_TRAIT_H
-#define TNCT_CONTAINER_TRT_STD_MAP_INDEX_TRAIT_H
+#ifndef TNCT_CONTAINER_TRT_STD_MAP_DESCRIPTION_H
+#define TNCT_CONTAINER_TRT_STD_MAP_DESCRIPTION_H
 
 #include <map>
 
-#include "tnct/container/trt/index_traits.h"
+#include "tnct/container/trt/index_definition.h"
 
 namespace tnct::container::trt {
 
-class std_map_index_trait_id {};
+class std_map_index_id {};
 
 template <typename t_key, typename t_value>
-struct index_traits<std_map_index_trait_id, t_key, t_value> {
-  using index = std::map<t_key, t_value>;
-  using iterator = index::iterator;
+struct index_definition<std_map_index_id, t_key, t_value> {
+  using index_type = std::map<t_key, t_value>;
   static constexpr bool unique = true;
 };
 
