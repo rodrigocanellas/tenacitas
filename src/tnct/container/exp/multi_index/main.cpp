@@ -89,10 +89,10 @@ using field_3 =
                                 }),
                                 std_multimap_index_id>;
 
-// using xpto_indexes =
-//     tnct::container::dat::multi_index<field_0, field_1, field_2, field_3>;
+using xpto_indexes =
+    tnct::container::dat::multi_index<field_0, field_1, field_2, field_3>;
 
-using xpto_indexes = tnct::container::dat::multi_index<field_0>;
+// using xpto_indexes = tnct::container::dat::multi_index<field_0>;
 
 using rec_opt_ref = xpto_indexes::rec_opt_ref;
 
@@ -100,14 +100,14 @@ int main() {
 
   xpto_indexes _xpto_indexes;
 
-  // std::cout << "\n###### Adding\n";
-  // _xpto_indexes.add(xpto{-9, 3.14, "hi"});
+  std::cout << "\n###### Adding\n";
+  _xpto_indexes.add(xpto{-9, 3.14, "hi"});
   // _xpto_indexes.add(xpto{138, 0.72, "hello"});
   // _xpto_indexes.add(xpto{138, -4.21, "bye"});
   // _xpto_indexes.add(xpto{-2, -7.85, "see u"});
   // _xpto_indexes.add(xpto{31, 9.012, "ouch"});
 
-  // std::cout << _xpto_indexes << std::endl;
+  std::cout << _xpto_indexes << std::endl;
 
   // std::cout << "\n###### Searching in index 0 key 138\n";
   // std::vector<rec_opt_ref> _rec_opt_refs{_xpto_indexes.get<0>(138)};

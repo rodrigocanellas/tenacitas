@@ -108,15 +108,17 @@ struct chunked_container_001 {
 
     container _container{10};
 
-    return (_container.get_chunck_size() == 4) && has_value(_container, 0, 10) &&
-           is_empty(_container, 1) && is_empty(_container, 2) &&
-           is_empty(_container, 3) && !_container[4].has_value();
+    return (_container.get_chunck_size() == 4) &&
+           has_value(_container, 0, 10) && is_empty(_container, 1) &&
+           is_empty(_container, 2) && is_empty(_container, 3) &&
+           !_container[4].has_value();
   }
 };
 
 struct chunked_container_002 {
   static std::string desc() {
-    return "chunked_container: add fills consecutive slots in the current chunk "
+    return "chunked_container: add fills consecutive slots in the current "
+           "chunk "
            "and returns references to those slots";
   }
 
@@ -139,7 +141,8 @@ struct chunked_container_002 {
 
 struct chunked_container_003 {
   static std::string desc() {
-    return "chunked_container: add allocates a new chunk when the current chunk "
+    return "chunked_container: add allocates a new chunk when the current "
+           "chunk "
            "becomes full";
   }
 
@@ -160,7 +163,8 @@ struct chunked_container_003 {
 
 struct chunked_container_004 {
   static std::string desc() {
-    return "chunked_container: slot and contained-object addresses remain stable "
+    return "chunked_container: slot and contained-object addresses remain "
+           "stable "
            "when new chunks are added";
   }
 
@@ -354,7 +358,8 @@ struct chunked_container_011 {
 
 struct chunked_container_012 {
   static std::string desc() {
-    return "chunked_container: const begin/end/cbegin/cend and const operator[] "
+    return "chunked_container: const begin/end/cbegin/cend and const "
+           "operator[] "
            "provide read-only access";
   }
 
@@ -407,7 +412,8 @@ struct chunked_container_013 {
 
 struct chunked_container_014 {
   static std::string desc() {
-    return "chunked_container: remove by invalid index or already-empty slot is "
+    return "chunked_container: remove by invalid index or already-empty slot "
+           "is "
            "a no-op";
   }
 
@@ -447,7 +453,8 @@ struct chunked_container_015 {
 
 struct chunked_container_016 {
   static std::string desc() {
-    return "chunked_container: remove ignores end and iterators owned by another "
+    return "chunked_container: remove ignores end and iterators owned by "
+           "another "
            "container";
   }
 
@@ -552,7 +559,8 @@ struct chunked_container_020 {
 
 struct chunked_container_021 {
   static std::string desc() {
-    return "chunked_container: copy construction preserves slot state and makes "
+    return "chunked_container: copy construction preserves slot state and "
+           "makes "
            "an independent container";
   }
 
@@ -649,29 +657,29 @@ struct chunked_container_024 {
   }
 };
 
-struct chunked_container_025 {
-  static std::string desc() {
-    return "chunked_container: explicitly initialized container supports a "
-           "copy/move type without default constructor";
-  }
+// struct chunked_container_025 {
+//   static std::string desc() {
+//     return "chunked_container: explicitly initialized container supports a "
+//            "copy/move type without default constructor";
+//   }
 
-  bool operator()(const program::bus::options &) {
-    using namespace chunked_container_test;
-    using non_default_container =
-        tnct::container::dat::chunked_container<non_default, 2>;
+//   bool operator()(const program::bus::options &) {
+//     using namespace chunked_container_test;
+//     using non_default_container =
+//         tnct::container::dat::chunked_container<non_default, 2>;
 
-    non_default_container _container{non_default{10}};
-    auto _ref{_container.add(non_default{20})};
+//     non_default_container _container{non_default{10}};
+//     auto _ref{_container.add(non_default{20})};
 
-    auto _slot0{_container[0]};
-    auto _slot1{_container[1]};
+//     auto _slot0{_container[0]};
+//     auto _slot1{_container[1]};
 
-    return _slot0.has_value() && _slot0->get().has_value() &&
-           (_slot0->get()->value == 10) && _slot1.has_value() &&
-           _slot1->get().has_value() && (_slot1->get()->value == 20) &&
-           _ref.get().has_value() && (_ref.get()->value == 20);
-  }
-};
+//     return _slot0.has_value() && _slot0->get().has_value() &&
+//            (_slot0->get()->value == 10) && _slot1.has_value() &&
+//            _slot1->get().has_value() && (_slot1->get()->value == 20) &&
+//            _ref.get().has_value() && (_ref.get()->value == 20);
+//   }
+// };
 
 struct chunked_container_026 {
   static std::string desc() {

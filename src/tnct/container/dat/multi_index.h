@@ -86,8 +86,8 @@ public:
 
     record() = default;
 
-    record(const record &) = delete;
-    record &operator=(const record &) = delete;
+    record(const record &) = default;
+    record &operator=(const record &) = default;
 
     record(record &&) = default;
     record &operator=(record &&) = default;
@@ -241,29 +241,30 @@ public:
 
     {
       std::cout << "\nobjects:\n";
-      std::for_each(p_multi_index.m_table.begin(), p_multi_index.m_table.end(),
-                    [&](const record &p_record) {
-                      if (p_record.get_optional().has_value()) {
-                        p_out << p_record << " ";
-                      } else {
-                        std::cout << "DELETED";
-                      }
-                      p_out << '\n';
-                    });
+      for (table_const_iterator _ite = p_multi_index.m_table.begin();
+           _ite != p_multi_index.m_table.end(); ++_ite) {
+        if (_ite->has_value()) {
+          p_out << _ite->value() << " ";
+        } else {
+          std::cout << "DELETED";
+        }
+        p_out << '\n';
+      }
     }
     {
       p_out << "\nindexes:\n";
       auto _visitor = [&]<tuple::cpt::is_tuple t_tuple, size_t t_index_pos>(
                           const t_tuple &p_indexes) {
         if constexpr (is_field_an_index<t_index_pos>()) {
-          const multi_index::index_t<t_index_pos> &_index{
-              std::get<t_index_pos>(p_indexes)};
+          using index = std::tuple_element_t<t_index_pos, multi_index::indexes>;
+
+          const index &_index{std::get<t_index_pos>(p_indexes)};
 
           std::cout << "index " << t_index_pos << " - ";
-          for (const auto &_value : _index) {
-            if (_value.second.get().get_optional().has_value()) {
+          for (const typename index::value_type &_value : _index) {
+            if (_value.second.get().has_value()) {
               p_out << "\t{k = " << _value.first
-                    << ", obj = " << _value.second.get().get_optional().value()
+                    << ", obj = " << _value.second.get().value().get_object()
                     << "}";
             } else {
               p_out << "\t{k = " << _value.first << ", obj = DELETED}";
@@ -286,6 +287,7 @@ private:
   //  using table = std::list<record>;
   using table = container::dat::chunked_container<record, 100>;
   using table_iterator = typename table::iterator;
+  using table_const_iterator = typename table::const_iterator;
   using table_element = typename table::element;
   using table_type = typename table::type;
 
@@ -341,11 +343,11 @@ private:
 
   void erase_indexes(typename record::index_iterators &p_index_iterators);
 
-  void erase_record(rec_opt_ref p_rec_opt_ref);
+  void erase_record(rec_opt_ref &p_rec_opt_ref);
 
 private:
-  table m_table{record{}};
-  indexes m_indexes{};
+  table m_table;
+  indexes m_indexes;
   std::mutex m_mutex;
 };
 
@@ -377,13 +379,13 @@ multi_index<t_fields_definitions...>::
       index &_index{std::get<t_field_pos>(m_indexes)};
 
       const field _field{
-          field_getter{}(_rec_opt_ref.get().get_optional().value())};
+          field_getter{}(_rec_opt_ref.get().value().get_object())};
 
       std::pair<typename index_iterator::value_type, bool> _res{
           _index.emplace(_field, _rec_opt_ref)};
       if (_res.second) {
         // index creation ok
-        _rec_opt_ref.get().template set_index_iterator<t_field_pos>(
+        _rec_opt_ref.get().value().template set_index_iterator<t_field_pos>(
             {_res.first});
       } else {
         // index creation not ok
@@ -589,13 +591,13 @@ template <cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
 void multi_index<t_fields_definitions...>::
 
-    erase_record(rec_opt_ref p_rec_opt_ref) {
+    erase_record(rec_opt_ref &p_rec_opt_ref) {
 
   if (p_rec_opt_ref.get().has_value()) {
-    rec_opt_ref &_rec_opt_ref{p_rec_opt_ref.get().value()};
-    erase_indexes(_rec_opt_ref.get_index_iterators());
-    _rec_opt_ref.reset_index_iterators();
-    _rec_opt_ref.get_mutable_object().reset();
+    record &_record{p_rec_opt_ref.get().value()};
+    erase_indexes(_record.get_index_iterators());
+    _record.reset_index_iterators();
+    p_rec_opt_ref.get().reset();
   }
 }
 

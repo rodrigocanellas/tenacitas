@@ -18,15 +18,25 @@
 namespace tnct::container::dat {
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 chunked_container<t_type, t_chunk_size>::chunked_container(type p_default)
-    : m_list{array{element{p_default}}}, m_list_current{0}, m_array_current(0) {
-}
+    : m_list{array{std::move(p_default)}}, m_list_current{0},
+      m_array_current(1) {}
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
+           t_chunk_size > 0)
+chunked_container<t_type, t_chunk_size>::chunked_container()
+    : m_list{array{}}, m_list_current{0}, m_array_current(0) {}
+
+template <typename t_type, std::size_t t_chunk_size>
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 chunked_container<t_type, t_chunk_size>::iterator
@@ -35,16 +45,18 @@ chunked_container<t_type, t_chunk_size>::begin() {
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 chunked_container<t_type, t_chunk_size>::iterator
 chunked_container<t_type, t_chunk_size>::end() {
-  return {{m_list.size(), 0}, this};
+  return {{m_list_current, m_array_current}, this};
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 chunked_container<t_type, t_chunk_size>::const_iterator
@@ -53,16 +65,18 @@ chunked_container<t_type, t_chunk_size>::begin() const {
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 chunked_container<t_type, t_chunk_size>::const_iterator
 chunked_container<t_type, t_chunk_size>::end() const {
-  return {{m_list.size(), 0}, this};
+  return {{m_list_current, m_array_current}, this};
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 chunked_container<t_type, t_chunk_size>::const_iterator
@@ -71,7 +85,8 @@ chunked_container<t_type, t_chunk_size>::cbegin() const {
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 chunked_container<t_type, t_chunk_size>::const_iterator
@@ -80,7 +95,8 @@ chunked_container<t_type, t_chunk_size>::cend() const {
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 chunked_container<t_type, t_chunk_size>::iterator
@@ -96,7 +112,8 @@ chunked_container<t_type, t_chunk_size>::index2ite(std::size_t p_index) {
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 chunked_container<t_type, t_chunk_size>::const_iterator
@@ -112,7 +129,8 @@ chunked_container<t_type, t_chunk_size>::index2ite(std::size_t p_index) const {
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 chunked_container<t_type, t_chunk_size>::const_list_iterator
@@ -121,7 +139,8 @@ chunked_container<t_type, t_chunk_size>::current_list_iterator() const {
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 chunked_container<t_type, t_chunk_size>::list_iterator
@@ -130,7 +149,8 @@ chunked_container<t_type, t_chunk_size>::current_list_iterator() {
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 chunked_container<t_type, t_chunk_size>::const_list_iterator
@@ -140,7 +160,8 @@ chunked_container<t_type, t_chunk_size>::get_list_iterator(
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 chunked_container<t_type, t_chunk_size>::list_iterator
@@ -150,7 +171,8 @@ chunked_container<t_type, t_chunk_size>::get_list_iterator(
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 bool chunked_container<t_type, t_chunk_size>::is_list_end(
@@ -159,7 +181,8 @@ bool chunked_container<t_type, t_chunk_size>::is_list_end(
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 std::optional<typename chunked_container<t_type, t_chunk_size>::ref>
@@ -172,7 +195,8 @@ chunked_container<t_type, t_chunk_size>::operator[](std::size_t p_index) {
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 std::optional<typename chunked_container<t_type, t_chunk_size>::const_ref>
@@ -185,7 +209,8 @@ chunked_container<t_type, t_chunk_size>::operator[](std::size_t p_index) const {
 };
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 void chunked_container<t_type, t_chunk_size>::remove(std::size_t p_index) {
@@ -197,7 +222,8 @@ void chunked_container<t_type, t_chunk_size>::remove(std::size_t p_index) {
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 void chunked_container<t_type, t_chunk_size>::remove(iterator p_ite) {
@@ -208,7 +234,8 @@ void chunked_container<t_type, t_chunk_size>::remove(iterator p_ite) {
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 typename chunked_container<t_type, t_chunk_size>::ref
@@ -217,15 +244,18 @@ chunked_container<t_type, t_chunk_size>::add(type &&p_object) {
     m_list.push_back(array{});
     ++m_list_current;
     m_array_current = 0;
-  } else {
+  } /*else {
     ++m_array_current;
-  }
+  }*/
   current_list_iterator()->at(m_array_current).emplace(std::move(p_object));
-  return {current_list_iterator()->at(m_array_current)};
+  ref _ref{current_list_iterator()->at(m_array_current)};
+  ++m_array_current;
+  return _ref;
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 void chunked_container<t_type, t_chunk_size>::erase(iterator p_ite) {
@@ -236,7 +266,8 @@ void chunked_container<t_type, t_chunk_size>::erase(iterator p_ite) {
 }
 
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 void chunked_container<t_type, t_chunk_size>::erase(ref p_ref) {
