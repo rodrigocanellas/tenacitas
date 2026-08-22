@@ -258,6 +258,24 @@ template <typename t_type, std::size_t t_chunk_size>
            std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
+
+void chunked_container<t_type, t_chunk_size>::unadd() {
+  if (m_array_current == 0) {
+    if (current_list_iterator() != m_list.begin()) {
+      m_array_current = (t_chunk_size - 1);
+      --m_list_current;
+    }
+  } else {
+    --m_array_current;
+  }
+  current_list_iterator()->at(m_array_current) = std::nullopt;
+}
+
+template <typename t_type, std::size_t t_chunk_size>
+  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
+           t_chunk_size > 0)
 void chunked_container<t_type, t_chunk_size>::erase(iterator p_ite) {
   if (p_ite.m_owner != this || p_ite == end()) {
     return;

@@ -87,6 +87,8 @@ struct chunked_container final {
 
   ref add(type &&p_object);
 
+  void unadd();
+
   void erase(iterator p_ite);
 
   void erase(ref p_ref);
