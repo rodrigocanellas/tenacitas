@@ -121,6 +121,10 @@ private:
 
   bool is_list_end(list_position p_list_position) const;
 
+  bool is_list_begin(list_position p_list_position) const {
+    return p_list_position == 0;
+  }
+
 private:
   list m_list;
 

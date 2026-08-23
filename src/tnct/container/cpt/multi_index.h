@@ -42,7 +42,7 @@ concept field_types_match =
                       t_idx,
 
                       typename t_multi_index::fields_definitions>::field_type,
-                  typename t_multi_index::template field_t<t_idx>> &&
+                  typename t_multi_index::template field_type<t_idx>> &&
               ...);
     }(std::make_index_sequence<
         std::tuple_size_v<typename t_multi_index::fields_definitions>>());
@@ -50,10 +50,10 @@ concept field_types_match =
 template <typename t_multi_index, std::size_t t_field_pos>
 concept has_get_method = requires(
     t_multi_index p_multi_index,
-    const typename t_multi_index::template field_t<t_field_pos> &p_field) {
+    const typename t_multi_index::template field_type<t_field_pos> &p_field) {
   {
     p_multi_index.template get<t_field_pos>(p_field)
-  } -> std::same_as<std::vector<typename t_multi_index::record_ref>>;
+  } -> std::same_as<std::vector<typename t_multi_index::rec_opt_ref>>;
 };
 
 template <typename t_multi_index>
@@ -67,7 +67,7 @@ concept has_get_methods =
 template <typename t_multi_index, std::size_t t_field_pos>
 concept has_erase_method = requires(
     t_multi_index p_multi_index,
-    const typename t_multi_index::template field_t<t_field_pos> &p_field) {
+    const typename t_multi_index::template field_type<t_field_pos> &p_field) {
   { p_multi_index.template erase<t_field_pos>(p_field) } -> std::same_as<void>;
 };
 
@@ -82,10 +82,10 @@ concept has_erase_methods =
 template <typename t_multi_index, std::size_t t_field_pos>
 concept has_update_method = requires(
     t_multi_index p_multi_index,
-    typename t_multi_index::record_ref p_record_ref,
-    const typename t_multi_index::template field_t<t_field_pos> &p_field) {
+    typename t_multi_index::rec_opt_ref p_rec_opt_ref,
+    const typename t_multi_index::template field_type<t_field_pos> &p_field) {
   {
-    p_multi_index.template update<t_field_pos>(p_record_ref, p_field)
+    p_multi_index.template update<t_field_pos>(p_rec_opt_ref, p_field)
   } -> std::same_as<bool>;
 };
 
@@ -106,11 +106,9 @@ concept multi_index = requires(t p_t, const typename t::record &p_record,
 
   typename t::object;
 
-  typename t::optional;
-
   typename t::record;
 
-  typename t::record_ref;
+  typename t::rec_opt_ref;
 
   requires internal::only_fields_definitions<t>;
 
@@ -120,11 +118,9 @@ concept multi_index = requires(t p_t, const typename t::record &p_record,
                         typename std::tuple_element_t<
                             0, typename t::fields_definitions>::object_type>;
 
-  requires std::same_as<typename t::optional,
-                        std::optional<typename t::object>>;
-
-  requires std::same_as<typename t::record_ref,
-                        std::reference_wrapper<typename t::record>>;
+  requires std::same_as<
+      typename t::rec_opt_ref,
+      std::reference_wrapper<std::optional<typename t::record>>>;
 
   requires ostream::cpt::has_output_operator<typename t::record>;
 
@@ -150,9 +146,9 @@ concept multi_index = requires(t p_t, const typename t::record &p_record,
 
   {
     p_t.add(std::declval<typename t::object>())
-  } -> std::same_as<std::optional<typename t::record_ref>>;
+  } -> std::same_as<std::optional<typename t::rec_opt_ref>>;
 
-  { p_record.get_optional() } -> std::same_as<const typename t::optional &>;
+  { p_record.get_object() } -> std::same_as<const typename t::object &>;
 };
 
 } // namespace tnct::container::cpt

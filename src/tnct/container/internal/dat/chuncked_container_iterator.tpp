@@ -72,9 +72,12 @@ chunked_container_iterator<t_chuncked_container, t_element> &
 chunked_container_iterator<t_chuncked_container, t_element>::operator++() {
   if (array_pos() + 1 < m_owner->get_chunck_size()) {
     ++array_pos();
-  } else {
+  } else if (!m_owner->is_list_end(list_pos())) {
     ++list_pos();
     array_pos() = 0;
+  } else {
+    array_pos() = m_owner->m_array_current;
+    list_pos() = m_owner->m_list_current;
   }
   return *this;
 }
@@ -93,14 +96,14 @@ chunked_container_iterator<t_chuncked_container, t_element> &
 chunked_container_iterator<t_chuncked_container, t_element>::
 
 operator--() {
-  if (m_owner->is_list_end(list_pos())) {
+  if (array_pos() == 0) {
+    if (m_owner->is_list_begin(list_pos())) {
+      return *this;
+    }
     --list_pos();
     array_pos() = m_owner->get_chunck_size() - 1;
-  } else if (array_pos() > 0) {
-    --array_pos();
   } else {
-    --list_pos();
-    array_pos() = m_owner->get_chunck_size() - 1;
+    --array_pos();
   }
   return *this;
 }

@@ -177,7 +177,7 @@ template <typename t_type, std::size_t t_chunk_size>
            t_chunk_size > 0)
 bool chunked_container<t_type, t_chunk_size>::is_list_end(
     list_position p_list_position) const {
-  return p_list_position == m_list.size();
+  return p_list_position == (m_list.size() - 1);
 }
 
 template <typename t_type, std::size_t t_chunk_size>
@@ -240,7 +240,7 @@ template <typename t_type, std::size_t t_chunk_size>
            t_chunk_size > 0)
 typename chunked_container<t_type, t_chunk_size>::ref
 chunked_container<t_type, t_chunk_size>::add(type &&p_object) {
-  if (m_array_current == (t_chunk_size - 1)) {
+  if (m_array_current == t_chunk_size) {
     m_list.push_back(array{});
     ++m_list_current;
     m_array_current = 0;

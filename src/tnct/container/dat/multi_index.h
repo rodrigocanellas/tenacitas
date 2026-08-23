@@ -409,7 +409,7 @@ multi_index<t_fields_definitions...>::
   tuple::bus::traverse<indexes, decltype(_visitor)>(_visitor);
 
   if (_error) {
-    //    erase_record(_rec_opt_ref);
+    erase_record(_rec_opt_ref);
     m_table.unadd();
     return std::nullopt;
   }
@@ -555,22 +555,26 @@ void multi_index<t_fields_definitions...>::
 
     erase_by_index(const field_type<t_field_pos> &p_field) {
 
-  index<t_field_pos> &_index{std::get<t_field_pos>(m_indexes)};
-  using index_iterator = index_iterator<t_field_pos>;
+  if constexpr (is_field_an_index<t_field_pos>()) {
 
-  std::pair<index_iterator, index_iterator> _range{_index.equal_range(p_field)};
+    index<t_field_pos> &_index{std::get<t_field_pos>(m_indexes)};
+    using index_iterator = index_iterator<t_field_pos>;
 
-  if (_range.first == _range.second) {
-    return;
-  }
-  index_iterator _ite{_range.first};
-  while (true) {
-    index_iterator _aux = _ite;
-    ++_ite;
-    erase_record(_aux->second.get());
+    std::pair<index_iterator, index_iterator> _range{
+        _index.equal_range(p_field)};
 
-    if (_ite == _range.second) {
-      break;
+    if (_range.first == _range.second) {
+      return;
+    }
+    index_iterator _ite{_range.first};
+    while (true) {
+      index_iterator _aux = _ite;
+      ++_ite;
+      erase_record(_aux->second.get());
+
+      if (_ite == _range.second) {
+        break;
+      }
     }
   }
 }

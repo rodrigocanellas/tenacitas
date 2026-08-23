@@ -5,6 +5,7 @@
 
 #include <iostream>
 
+#include "tnct/container/cpt/multi_index.h"
 #include "tnct/container/dat/multi_index.h"
 #include "tnct/container/trt/field_definition.h"
 #include "tnct/container/trt/std_map_definition.h"
@@ -91,8 +92,6 @@ using field_3 =
 
 using xpto_indexes =
     tnct::container::dat::multi_index<field_0, field_1, field_2, field_3>;
-
-// using xpto_indexes = tnct::container::dat::multi_index<field_0>;
 
 using rec_opt_ref = xpto_indexes::rec_opt_ref;
 
