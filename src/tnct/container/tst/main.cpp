@@ -82,6 +82,8 @@ int main(int argc, char **argv) {
   run_test(_tester, container::tst::chunked_container_026);
   run_test(_tester, container::tst::chunked_container_027);
   run_test(_tester, container::tst::chunked_container_028);
+  run_test(_tester, container::tst::chunked_container_029);
+  run_test(_tester, container::tst::chunked_container_030);
 
   run_test(_tester, container::tst::multi_index_cpt_000);
   run_test(_tester, container::tst::multi_index_cpt_001);

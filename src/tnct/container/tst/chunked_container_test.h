@@ -95,8 +95,8 @@ struct chunked_container_001 {
 
     ++_ite;
 
-    return (_container.get_chunck_size() == 4) &&
-           has_value(_container, 0, 10) && (_ite == _container.end());
+    return (_container.chunck_size() == 4) && has_value(_container, 0, 10) &&
+           (_ite == _container.end());
   }
 };
 
@@ -633,9 +633,8 @@ struct chunked_container_024 {
     _container.add(20);
     _container.add(30);
 
-    return (_container.get_chunck_size() == 1) &&
-           has_value(_container, 0, 10) && has_value(_container, 1, 20) &&
-           has_value(_container, 2, 30) &&
+    return (_container.chunck_size() == 1) && has_value(_container, 0, 10) &&
+           has_value(_container, 1, 20) && has_value(_container, 2, 30) &&
            (forward_values(_container) ==
             std::vector<std::optional<int>>{10, 20, 30});
   }
@@ -767,6 +766,33 @@ struct chunked_container_029 {
 
     return has_value(_container, 0, 10) && has_value(_container, 1, 30) &&
            _replacement.get().has_value() && (_replacement.get().value() == 30);
+  }
+};
+
+struct chunked_container_030 {
+  static std::string desc() {
+    return "chunked_container: iterator stops at logical end after "
+           "unadd and refill";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using namespace chunked_container_test;
+
+    small_container _container;
+
+    _container.add(10);
+    _container.add(20);
+    _container.add(30);
+
+    _container.unadd(); // removes 30
+    _container.unadd(); // removes 20
+
+    _container.add(20);
+
+    return forward_values(_container) ==
+               std::vector<std::optional<int>>{10, 20} &&
+           backward_values(_container) ==
+               std::vector<std::optional<int>>{20, 10};
   }
 };
 

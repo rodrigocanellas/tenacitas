@@ -38,7 +38,6 @@ struct chunked_container final {
   using element = std::optional<type>;
   using ref = std::reference_wrapper<element>;
   using const_ref = std::reference_wrapper<const element>;
-  static constexpr std::size_t chunck_size = t_chunk_size;
 
   friend class tnct::container::internal::dat::chunked_container_iterator<
       chunked_container, element>;
@@ -93,7 +92,11 @@ struct chunked_container final {
 
   void erase(ref p_ref);
 
-  constexpr std::size_t get_chunck_size() const { return t_chunk_size; }
+  constexpr std::size_t chunck_size() const { return t_chunk_size; }
+
+  constexpr bool empty() const {
+    return (m_list_current == 0) && (m_array_current == 0);
+  }
 
 private:
   using array = std::array<element, t_chunk_size>;
@@ -119,11 +122,34 @@ private:
 
   list_iterator get_list_iterator(list_position p_list_position);
 
-  bool is_list_end(list_position p_list_position) const;
-
-  bool is_list_begin(list_position p_list_position) const {
-    return p_list_position == 0;
+  constexpr bool is_end_of_list(list_position p_list_position) const {
+    return p_list_position == m_list_current;
   }
+
+  constexpr bool is_begin_of_chunk(array_position p_array_position) const {
+    return p_array_position == 0;
+  }
+
+  constexpr bool is_end_of_chunk(array_position p_array_position) const {
+    return p_array_position == (t_chunk_size - 1);
+  }
+
+  constexpr bool is_end_of_container(list_position p_list_position,
+                                     array_position p_array_position) const {
+    return (p_list_position == m_list_current) &&
+           (p_array_position == m_array_current);
+  }
+
+  constexpr bool is_begin_of_container(list_position p_list_position,
+                                       array_position p_array_position) const {
+    return (p_list_position == 0) && (p_array_position == 0);
+  }
+
+  constexpr std::size_t begin_of_chunk() const { return 0; }
+
+  constexpr std::size_t end_of_chunk() const { return t_chunk_size - 1; }
+
+  constexpr std::size_t list_size() const { return m_list.size(); }
 
 private:
   list m_list;

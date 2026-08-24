@@ -104,7 +104,7 @@ chunked_container<t_type, t_chunk_size>::index2ite(std::size_t p_index) {
   const auto _list_index = p_index / t_chunk_size;
   const auto _array_index = p_index % t_chunk_size;
 
-  if (_list_index >= m_list.size()) {
+  if (_list_index >= list_size()) {
     return end();
   }
 
@@ -121,7 +121,7 @@ chunked_container<t_type, t_chunk_size>::index2ite(std::size_t p_index) const {
   const auto _list_index = p_index / t_chunk_size;
   const auto _array_index = p_index % t_chunk_size;
 
-  if (_list_index >= m_list.size()) {
+  if (_list_index >= list_size()) {
     return cend();
   }
 
@@ -168,16 +168,6 @@ chunked_container<t_type, t_chunk_size>::list_iterator
 chunked_container<t_type, t_chunk_size>::get_list_iterator(
     list_position p_list_position) {
   return std::next(m_list.begin(), p_list_position);
-}
-
-template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
-           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
-           std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
-           t_chunk_size > 0)
-bool chunked_container<t_type, t_chunk_size>::is_list_end(
-    list_position p_list_position) const {
-  return p_list_position == (m_list.size() - 1);
 }
 
 template <typename t_type, std::size_t t_chunk_size>
@@ -240,13 +230,14 @@ template <typename t_type, std::size_t t_chunk_size>
            t_chunk_size > 0)
 typename chunked_container<t_type, t_chunk_size>::ref
 chunked_container<t_type, t_chunk_size>::add(type &&p_object) {
-  if (m_array_current == t_chunk_size) {
+
+  if (!empty() && (m_array_current == t_chunk_size)) {
     m_list.push_back(array{});
     ++m_list_current;
     m_array_current = 0;
   } /*else {
-    ++m_array_current;
-  }*/
+   ++m_array_current;
+ }*/
   current_list_iterator()->at(m_array_current).emplace(std::move(p_object));
   ref _ref{current_list_iterator()->at(m_array_current)};
   ++m_array_current;
@@ -261,7 +252,7 @@ template <typename t_type, std::size_t t_chunk_size>
 
 void chunked_container<t_type, t_chunk_size>::unadd() {
   if (m_array_current == 0) {
-    if (current_list_iterator() != m_list.begin()) {
+    if (m_list_current != 0) {
       m_array_current = (t_chunk_size - 1);
       --m_list_current;
     }
