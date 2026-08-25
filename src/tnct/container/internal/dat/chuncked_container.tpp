@@ -119,12 +119,13 @@ template <typename t_type, std::size_t t_chunk_size>
            t_chunk_size > 0)
 chunked_container<t_type, t_chunk_size>::const_iterator
 chunked_container<t_type, t_chunk_size>::index2ite(std::size_t p_index) const {
+
+  if (p_index >= container_size()) {
+    return end();
+  }
+
   const auto _list_index = p_index / t_chunk_size;
   const auto _array_index = p_index % t_chunk_size;
-
-  if (_list_index >= list_size()) {
-    return cend();
-  }
 
   return {{_list_index, static_cast<array_position>(_array_index)}, this};
 }

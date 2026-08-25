@@ -814,6 +814,54 @@ struct chunked_container_031 {
   }
 };
 
+struct chunked_container_032 {
+  static std::string desc() {
+    return "chunked_container: const indexes after logical end are invalid";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using namespace chunked_container_test;
+
+    container _container;
+    _container.add(10);
+    _container.add(20);
+
+    const container &_const_container{_container};
+
+    return !_const_container[2].has_value() &&
+           !_const_container[3].has_value() && !_const_container[4].has_value();
+  }
+};
+
+struct chunked_container_033 {
+  static std::string desc() {
+    return "chunked_container: full chunk has equivalent iteration before "
+           "and after crossing the chunk boundary and unadd";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using namespace chunked_container_test;
+
+    small_container _direct;
+    _direct.add(10);
+    _direct.add(20);
+
+    small_container _rolled_back;
+    _rolled_back.add(10);
+    _rolled_back.add(20);
+    _rolled_back.add(30);
+    _rolled_back.unadd();
+
+    const std::vector<std::optional<int>> _forward{10, 20};
+    const std::vector<std::optional<int>> _backward{20, 10};
+
+    return forward_values(_direct) == _forward &&
+           backward_values(_direct) == _backward &&
+           forward_values(_rolled_back) == _forward &&
+           backward_values(_rolled_back) == _backward;
+  }
+};
+
 } // namespace tnct::container::tst
 
 #endif
