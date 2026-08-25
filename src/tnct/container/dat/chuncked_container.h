@@ -130,7 +130,7 @@ private:
     return p_array_position == 0;
   }
 
-  constexpr bool is_end_of_chunk(array_position p_array_position) const {
+  constexpr bool is_last_of_chunk(array_position p_array_position) const {
     return p_array_position == (t_chunk_size - 1);
   }
 
@@ -147,9 +147,13 @@ private:
 
   constexpr std::size_t begin_of_chunk() const { return 0; }
 
-  constexpr std::size_t end_of_chunk() const { return t_chunk_size - 1; }
+  constexpr std::size_t last_of_chunk() const { return t_chunk_size - 1; }
 
   constexpr std::size_t list_size() const { return m_list.size(); }
+
+  constexpr std::size_t container_size() const {
+    return m_list_current * t_chunk_size + m_array_current;
+  }
 
 private:
   list m_list;

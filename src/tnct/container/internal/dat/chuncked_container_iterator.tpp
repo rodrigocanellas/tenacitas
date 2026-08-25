@@ -73,7 +73,7 @@ chunked_container_iterator<t_chuncked_container, t_element>::operator++() {
   if (m_owner->is_end_of_container(list_pos(), array_pos())) {
     return *this;
   }
-  if (m_owner->is_end_of_chunk(array_pos()) &&
+  if (m_owner->is_last_of_chunk(array_pos()) &&
       (!m_owner->is_end_of_list(list_pos()))) {
 
     ++list_pos();
@@ -103,7 +103,7 @@ operator--() {
   }
   if (m_owner->is_begin_of_chunk(array_pos())) {
     --list_pos();
-    array_pos() = m_owner->end_of_chunk();
+    array_pos() = m_owner->last_of_chunk();
     return *this;
   }
   --array_pos();

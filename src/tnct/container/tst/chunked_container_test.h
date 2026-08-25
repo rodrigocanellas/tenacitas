@@ -796,6 +796,24 @@ struct chunked_container_030 {
   }
 };
 
+struct chunked_container_031 {
+  static std::string desc() {
+    return "chunked_container: indexes after logical end are invalid";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using namespace chunked_container_test;
+
+    container _container;
+
+    _container.add(10);
+    _container.add(20);
+
+    return !_container[2].has_value() && !_container[3].has_value() &&
+           !_container[4].has_value();
+  }
+};
+
 } // namespace tnct::container::tst
 
 #endif
