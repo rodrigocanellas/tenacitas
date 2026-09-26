@@ -78,8 +78,7 @@ using id_field = index_field_definition<
     std_map_index_id>;
 
 using score_field = index_field_definition<
-    object, float,
-    decltype([](const object &p_object) -> float {
+    object, float, decltype([](const object &p_object) -> float {
       return p_object.get_score();
     }),
     decltype([](object &p_object, float p_score) -> void {
@@ -88,8 +87,7 @@ using score_field = index_field_definition<
     std_multimap_index_id>;
 
 using name_field = attribute_field_definition<
-    object, std::string,
-    decltype([](const object &p_object) -> std::string {
+    object, std::string, decltype([](const object &p_object) -> std::string {
       return p_object.get_name();
     }),
     decltype([](object &p_object, std::string p_name) -> void {
@@ -97,8 +95,7 @@ using name_field = attribute_field_definition<
     })>;
 
 using name_unique_field = index_field_definition<
-    object, std::string,
-    decltype([](const object &p_object) -> std::string {
+    object, std::string, decltype([](const object &p_object) -> std::string {
       return p_object.get_name();
     }),
     decltype([](object &p_object, std::string p_name) -> void {
@@ -107,8 +104,7 @@ using name_unique_field = index_field_definition<
     std_map_index_id>;
 
 using id_name_calculated_field = calculated_index_definition<
-    object, std::string,
-    decltype([](const object &p_object) -> std::string {
+    object, std::string, decltype([](const object &p_object) -> std::string {
       return std::to_string(p_object.get_id()) + ":" + p_object.get_name();
     }),
     std_multimap_index_id>;
@@ -118,14 +114,14 @@ using index =
 
 using record_ref = typename index::rec_opt_ref;
 
-using rollback_index = tnct::container::dat::multi_index<
-    id_field, name_unique_field, score_field>;
+using rollback_index =
+    tnct::container::dat::multi_index<id_field, name_unique_field, score_field>;
 
 using rollback_record_ref = typename rollback_index::rec_opt_ref;
 
 using calculated_index =
     tnct::container::dat::multi_index<id_field, score_field, name_field,
-                                     id_name_calculated_field>;
+                                      id_name_calculated_field>;
 
 using calculated_record_ref = typename calculated_index::rec_opt_ref;
 
@@ -206,8 +202,7 @@ struct multi_index_002 {
 
     auto _r3{_index.add(object{1, 30.0F, "reused"})};
 
-    return _r3.has_value() &&
-           one_live_by_id(_index, 1, 30.0F, "reused");
+    return _r3.has_value() && one_live_by_id(_index, 1, 30.0F, "reused");
   }
 };
 
@@ -255,8 +250,7 @@ struct multi_index_004 {
       return false;
     }
 
-    return _index.get<0>(1).empty() &&
-           one_live_by_id(_index, 2, 10.0F, "one");
+    return _index.get<0>(1).empty() && one_live_by_id(_index, 2, 10.0F, "one");
   }
 };
 
@@ -310,8 +304,7 @@ struct multi_index_006 {
 
     return (_score_10.size() == 1) &&
            has_object_in(_score_10, 2, 10.0F, "two") &&
-           (_score_20.size() == 1) &&
-           has_object_in(_score_20, 1, 20.0F, "one");
+           (_score_20.size() == 1) && has_object_in(_score_20, 1, 20.0F, "one");
   }
 };
 
@@ -381,10 +374,8 @@ struct multi_index_008 {
     const std::vector<rollback_record_ref> _id_1{_index.get<0>(1)};
     const std::vector<rollback_record_ref> _id_3{_index.get<0>(3)};
 
-    return (_id_1.size() == 1) &&
-           has_object_in(_id_1, 1, 10.0F, "one") &&
-           (_id_3.size() == 1) &&
-           has_object_in(_id_3, 3, 40.0F, "three") &&
+    return (_id_1.size() == 1) && has_object_in(_id_1, 1, 10.0F, "one") &&
+           (_id_3.size() == 1) && has_object_in(_id_3, 3, 40.0F, "three") &&
            _index.get<1>(std::string{"three"}).size() == 1;
   }
 };
@@ -434,8 +425,7 @@ struct multi_index_010 {
 
     auto _r2{_index.add(object{1, 20.0F, "two"})};
 
-    return _r2.has_value() &&
-           one_live_by_id(_index, 1, 20.0F, "two");
+    return _r2.has_value() && one_live_by_id(_index, 1, 20.0F, "two");
   }
 };
 
@@ -456,14 +446,15 @@ struct multi_index_011 {
 
     _index.erase<0>(1);
 
-    return !_index.update<0>(_r1.value(), 2) &&
-           !_r1->get().has_value() && _index.get<0>(2).empty();
+    return !_index.update<0>(_r1.value(), 2) && !_r1->get().has_value() &&
+           _index.get<0>(2).empty();
   }
 };
 
 struct multi_index_012 {
   static std::string desc() {
-    return "multi_index: update of a non-indexed field changes attribute lookup "
+    return "multi_index: update of a non-indexed field changes attribute "
+           "lookup "
            "without changing unrelated indexes";
   }
 
@@ -473,8 +464,7 @@ struct multi_index_012 {
     index _index;
 
     auto _r1{_index.add(object{1, 10.0F, "one"})};
-    if (!_r1 ||
-        !_index.update<2>(_r1.value(), std::string{"uno"})) {
+    if (!_r1 || !_index.update<2>(_r1.value(), std::string{"uno"})) {
       return false;
     }
 
@@ -510,10 +500,8 @@ struct multi_index_013 {
     const std::vector<record_ref> _score_7{_index.get<1>(7.0F)};
     const std::vector<record_ref> _score_8{_index.get<1>(8.0F)};
 
-    return (_score_7.size() == 1) &&
-           has_object_in(_score_7, 2, 7.0F, "two") &&
-           (_score_8.size() == 1) &&
-           has_object_in(_score_8, 1, 8.0F, "one") &&
+    return (_score_7.size() == 1) && has_object_in(_score_7, 2, 7.0F, "two") &&
+           (_score_8.size() == 1) && has_object_in(_score_8, 1, 8.0F, "one") &&
            one_live_by_id(_index, 1, 8.0F, "one") &&
            one_live_by_id(_index, 2, 7.0F, "two");
   }
@@ -543,8 +531,7 @@ struct multi_index_014 {
         _index.get<3>(std::string{"1:uno"})};
 
     return _index.get<3>(std::string{"1:one"}).empty() &&
-           (_records.size() == 1) &&
-           has_object_in(_records, 1, 10.0F, "uno");
+           (_records.size() == 1) && has_object_in(_records, 1, 10.0F, "uno");
   }
 };
 
@@ -571,14 +558,68 @@ struct multi_index_015 {
     const std::vector<calculated_record_ref> _records{
         _index.get<3>(std::string{"2:one"})};
 
-    return _index.get<0>(1).empty() &&
-           (_index.get<0>(2).size() == 1) &&
+    return _index.get<0>(1).empty() && (_index.get<0>(2).size() == 1) &&
            _index.get<3>(std::string{"1:one"}).empty() &&
-           (_records.size() == 1) &&
-           has_object_in(_records, 2, 10.0F, "one");
+           (_records.size() == 1) && has_object_in(_records, 2, 10.0F, "one");
   }
 };
 
+struct multi_index_016 {
+  static std::string desc() {
+    return "multi_index: get by regex using a non-indexed string attribute";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using namespace multi_index_test;
+
+    index _index;
+
+    if (!_index.add(object{1, 10.0F, "alpha"}) ||
+        !_index.add(object{2, 20.0F, "alphabet"}) ||
+        !_index.add(object{3, 30.0F, "beta"}) ||
+        !_index.add(object{4, 40.0F, "gamma"})) {
+      return false;
+    }
+
+    const std::vector<record_ref> _records{_index.get<2>(std::regex{"alpha"})};
+
+    return (_records.size() == 2) &&
+           has_object_in(_records, 1, 10.0F, "alpha") &&
+           has_object_in(_records, 2, 20.0F, "alphabet") &&
+           !has_object_in(_records, 3, 30.0F, "beta") &&
+           !has_object_in(_records, 4, 40.0F, "gamma") &&
+           _index.get<2>(std::regex{"does-not-exist"}).empty();
+  }
+};
+
+struct multi_index_017 {
+  static std::string desc() {
+    return "multi_index: get by regex using an indexed string field";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using namespace multi_index_test;
+
+    rollback_index _index;
+
+    if (!_index.add(object{1, 10.0F, "alpha"}) ||
+        !_index.add(object{2, 20.0F, "alphabet"}) ||
+        !_index.add(object{3, 30.0F, "beta"}) ||
+        !_index.add(object{4, 40.0F, "gamma"})) {
+      return false;
+    }
+
+    const std::vector<rollback_record_ref> _records{
+        _index.get<1>(std::regex{"alpha"})};
+
+    return (_records.size() == 2) &&
+           has_object_in(_records, 1, 10.0F, "alpha") &&
+           has_object_in(_records, 2, 20.0F, "alphabet") &&
+           !has_object_in(_records, 3, 30.0F, "beta") &&
+           !has_object_in(_records, 4, 40.0F, "gamma") &&
+           _index.get<1>(std::regex{"does-not-exist"}).empty();
+  }
+};
 } // namespace tnct::container::tst
 
 #endif

@@ -231,12 +231,8 @@ public:
     requires(std::same_as<std::string, field_type<t_field_pos>>)
   std::vector<rec_opt_ref> get(const std::regex &p_regex) {
 
-    std::vector<rec_opt_ref> _res;
-    if constexpr (is_field_an_index<t_field_pos>()) {
-      _res = get_by_index<t_field_pos>(p_regex);
-    } else {
-      _res = get_by_attribute<t_field_pos>(p_regex);
-    }
+    std::vector<rec_opt_ref> _res{get_by_attribute<t_field_pos>(p_regex)};
+
     if (!_res.empty()) {
       std::sort(_res.begin(), _res.end(),
                 [&](const rec_opt_ref &p_1, const rec_opt_ref &p_2) {
@@ -382,9 +378,6 @@ private:
   template <std::size_t t_field_pos>
   std::vector<rec_opt_ref>
   get_by_attribute(const field_type<t_field_pos> &p_field);
-
-  template <std::size_t t_field_pos>
-  std::vector<rec_opt_ref> get_by_index(const std::regex &p_regex);
 
   template <std::size_t t_field_pos>
   std::vector<rec_opt_ref> get_by_attribute(const std::regex &p_regex);
@@ -745,38 +738,6 @@ multi_index<t_fields_definitions...>::
     }
   }
   return _res;
-}
-
-template <cpt::field_definition... t_fields_definitions>
-  requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
-template <std::size_t t_field_pos>
-std::vector<typename multi_index<t_fields_definitions...>::rec_opt_ref>
-multi_index<t_fields_definitions...>::
-
-    get_by_index(const std::regex &p_regex) {
-
-  using index_iterator = index_iterator<t_field_pos>;
-
-  std::vector<rec_opt_ref> _result;
-
-  index<t_field_pos> &_index{std::get<t_field_pos>(m_indexes)};
-
-  for (index_iterator _ite{_index.first}; _ite != _index.end(); ++_ite) {
-    rec_opt_ref &_rec_opt_ref{_ite->second};
-    if (_rec_opt_ref.get().has_value()) {
-
-      const object &_object{_rec_opt_ref.get().value().get_object()};
-
-      field_getter<t_field_pos> _field_getter;
-
-      const std::string _value{_field_getter(_object)};
-
-      if (std::regex_search(_value, p_regex)) {
-        _result.push_back(_rec_opt_ref);
-      }
-    }
-  }
-  return _result;
 }
 
 template <cpt::field_definition... t_fields_definitions>
