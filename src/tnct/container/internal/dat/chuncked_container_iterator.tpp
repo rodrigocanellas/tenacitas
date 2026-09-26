@@ -70,12 +70,17 @@ chunked_container_iterator<t_chuncked_container, t_element>::operator->()
 template <typename t_chuncked_container, typename t_element>
 chunked_container_iterator<t_chuncked_container, t_element> &
 chunked_container_iterator<t_chuncked_container, t_element>::operator++() {
-  if (array_pos() + 1 < m_owner->get_chunck_size()) {
-    ++array_pos();
-  } else {
-    ++list_pos();
-    array_pos() = 0;
+  if (m_owner->is_end_of_container(list_pos(), array_pos())) {
+    return *this;
   }
+  if (m_owner->is_last_of_chunk(array_pos()) &&
+      (!m_owner->is_end_of_list(list_pos()))) {
+
+    ++list_pos();
+    array_pos() = m_owner->begin_of_chunk();
+    return *this;
+  }
+  ++array_pos();
   return *this;
 }
 template <typename t_chuncked_container, typename t_element>
@@ -93,15 +98,15 @@ chunked_container_iterator<t_chuncked_container, t_element> &
 chunked_container_iterator<t_chuncked_container, t_element>::
 
 operator--() {
-  if (m_owner->is_list_end(list_pos())) {
-    --list_pos();
-    array_pos() = m_owner->get_chunck_size() - 1;
-  } else if (array_pos() > 0) {
-    --array_pos();
-  } else {
-    --list_pos();
-    array_pos() = m_owner->get_chunck_size() - 1;
+  if (m_owner->is_begin_of_container(list_pos(), array_pos())) {
+    return *this;
   }
+  if (m_owner->is_begin_of_chunk(array_pos())) {
+    --list_pos();
+    array_pos() = m_owner->last_of_chunk();
+    return *this;
+  }
+  --array_pos();
   return *this;
 }
 

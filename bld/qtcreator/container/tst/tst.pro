@@ -10,13 +10,7 @@ PRJ_DIR=$$BASE_DIR/tnct/container/tst
 SOURCES = $$PRJ_DIR/main.cpp
 
 HEADERS = \
-          $$PRJ_DIR/circular_queue_test.h \
-          $$PRJ_DIR/cpt_test.h \
-          $$PRJ_DIR/matrix_test.h \
-          $$PRJ_DIR/multiply_matrix_test.h \
-          $$PRJ_DIR/multiply_matrix_row_test.h \
-          $$PRJ_DIR/multi_index_test.h \
-          $$PRJ_DIR/chunked_container_test.h
+          $$PRJ_DIR/*.h
 
 DISTFILES += \
     $$PRJ_DIR/circular_queue_tests_000.ini

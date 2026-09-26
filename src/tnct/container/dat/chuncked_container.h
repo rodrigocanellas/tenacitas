@@ -29,6 +29,7 @@ namespace tnct::container::dat {
 /// \tparam t_chunk_size number of t_class objects in each chunk
 template <typename t_type, std::size_t t_chunk_size>
   requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
+           std::is_default_constructible_v<std::remove_cvref_t<t_type>> &&
            std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 
@@ -49,7 +50,9 @@ struct chunked_container final {
       tnct::container::internal::dat::chunked_container_iterator<
           chunked_container, const element>;
 
-  chunked_container(type p_default = type{});
+  chunked_container(type p_default);
+
+  chunked_container();
 
   chunked_container(const chunked_container &) = default;
 
@@ -83,11 +86,17 @@ struct chunked_container final {
 
   ref add(type &&p_object);
 
+  void unadd();
+
   void erase(iterator p_ite);
 
   void erase(ref p_ref);
 
-  constexpr std::size_t get_chunck_size() const { return t_chunk_size; }
+  constexpr std::size_t chunck_size() const { return t_chunk_size; }
+
+  constexpr bool empty() const {
+    return (m_list_current == 0) && (m_array_current == 0);
+  }
 
 private:
   using array = std::array<element, t_chunk_size>;
@@ -113,7 +122,38 @@ private:
 
   list_iterator get_list_iterator(list_position p_list_position);
 
-  bool is_list_end(list_position p_list_position) const;
+  constexpr bool is_end_of_list(list_position p_list_position) const {
+    return p_list_position == m_list_current;
+  }
+
+  constexpr bool is_begin_of_chunk(array_position p_array_position) const {
+    return p_array_position == 0;
+  }
+
+  constexpr bool is_last_of_chunk(array_position p_array_position) const {
+    return p_array_position == (t_chunk_size - 1);
+  }
+
+  constexpr bool is_end_of_container(list_position p_list_position,
+                                     array_position p_array_position) const {
+    return (p_list_position == m_list_current) &&
+           (p_array_position == m_array_current);
+  }
+
+  constexpr bool is_begin_of_container(list_position p_list_position,
+                                       array_position p_array_position) const {
+    return (p_list_position == 0) && (p_array_position == 0);
+  }
+
+  constexpr std::size_t begin_of_chunk() const { return 0; }
+
+  constexpr std::size_t last_of_chunk() const { return t_chunk_size - 1; }
+
+  constexpr std::size_t list_size() const { return m_list.size(); }
+
+  constexpr std::size_t container_size() const {
+    return m_list_current * t_chunk_size + m_array_current;
+  }
 
 private:
   list m_list;

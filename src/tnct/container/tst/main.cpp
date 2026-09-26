@@ -9,6 +9,7 @@
 #include "tnct/container/tst/circular_queue_test.h"
 #include "tnct/container/tst/cpt_test.h"
 #include "tnct/container/tst/matrix_test.h"
+#include "tnct/container/tst/multi_index_cpt_test.h"
 #include "tnct/container/tst/multi_index_test.h"
 #include "tnct/container/tst/multiply_matrix_row_test.h"
 #include "tnct/container/tst/multiply_matrix_test.h"
@@ -52,6 +53,8 @@ int main(int argc, char **argv) {
   run_test(_tester, container::tst::multi_index_013);
   run_test(_tester, container::tst::multi_index_014);
   run_test(_tester, container::tst::multi_index_015);
+  run_test(_tester, container::tst::multi_index_016);
+  run_test(_tester, container::tst::multi_index_017);
 
   run_test(_tester, container::tst::chunked_container_001);
   run_test(_tester, container::tst::chunked_container_002);
@@ -81,4 +84,26 @@ int main(int argc, char **argv) {
   run_test(_tester, container::tst::chunked_container_026);
   run_test(_tester, container::tst::chunked_container_027);
   run_test(_tester, container::tst::chunked_container_028);
+  run_test(_tester, container::tst::chunked_container_029);
+  run_test(_tester, container::tst::chunked_container_030);
+  run_test(_tester, container::tst::chunked_container_031);
+  run_test(_tester, container::tst::chunked_container_032);
+  run_test(_tester, container::tst::chunked_container_033);
+
+  run_test(_tester, container::tst::multi_index_cpt_000);
+  run_test(_tester, container::tst::multi_index_cpt_001);
+  run_test(_tester, container::tst::multi_index_cpt_002);
+  run_test(_tester, container::tst::multi_index_cpt_003);
+  run_test(_tester, container::tst::multi_index_cpt_004);
+  run_test(_tester, container::tst::multi_index_cpt_005);
+  run_test(_tester, container::tst::multi_index_cpt_006);
+  run_test(_tester, container::tst::multi_index_cpt_007);
+  run_test(_tester, container::tst::multi_index_cpt_008);
+  run_test(_tester, container::tst::multi_index_cpt_009);
+  run_test(_tester, container::tst::multi_index_cpt_010);
+  run_test(_tester, container::tst::multi_index_cpt_011);
+  run_test(_tester, container::tst::multi_index_cpt_012);
+  run_test(_tester, container::tst::multi_index_cpt_013);
+  run_test(_tester, container::tst::multi_index_cpt_014);
+  run_test(_tester, container::tst::multi_index_cpt_015);
 }
