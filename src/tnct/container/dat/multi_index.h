@@ -11,14 +11,13 @@
 #include <mutex>
 #include <optional>
 #include <ostream>
+#include <regex>
 #include <tuple>
 #include <utility>
 
 #include "tnct/container/cpt/field_definition.h"
-#include "tnct/container/cpt/index_definition.h"
 #include "tnct/container/dat/chuncked_container.h"
 #include "tnct/container/trt/fields_definitions_are_compatible.h"
-#include "tnct/container/trt/index_id_has_index_definition.h"
 #include "tnct/container/trt/no_index_definition.h"
 #include "tnct/tuple/bus/traverse.h"
 #include "tnct/tuple/cpt/is_tuple.h"
@@ -212,6 +211,42 @@ public:
   template <std::size_t t_field_pos>
   std::vector<rec_opt_ref> get(const field_type<t_field_pos> &p_field);
 
+  /// Retrieves a collection of references to \p record
+  ///
+  /// \tparam t_field_pos is the field used to retrieve the references to \p
+  /// record
+  ///
+  /// \param p_regex is a regular expression to be used to match the value of
+  /// the field
+  ///
+  /// \return collection of references to \p record
+  ///
+  /// \note if there is an index associated to t_field_pos, it will be used to
+  /// retrive the references to \p record
+  ///
+  /// \note if the index associated to t_field_pos is an index that does not
+  /// allow repetition, the number of references to \p record in the return is
+  /// at most 1
+  template <std::size_t t_field_pos>
+    requires(std::same_as<std::string, field_type<t_field_pos>>)
+  std::vector<rec_opt_ref> get(const std::regex &p_regex) {
+
+    std::vector<rec_opt_ref> _res;
+    if constexpr (is_field_an_index<t_field_pos>()) {
+      _res = get_by_index<t_field_pos>(p_regex);
+    } else {
+      _res = get_by_attribute<t_field_pos>(p_regex);
+    }
+    if (!_res.empty()) {
+      std::sort(_res.begin(), _res.end(),
+                [&](const rec_opt_ref &p_1, const rec_opt_ref &p_2) {
+                  return p_1.get().value() < p_2.get().value();
+                });
+    }
+
+    return _res;
+  }
+
   /// Erase all the references to \p record that have a certain field value
   ///
   /// \tparam t_field_pos is the field used to retrieve the references to \p
@@ -347,6 +382,12 @@ private:
   template <std::size_t t_field_pos>
   std::vector<rec_opt_ref>
   get_by_attribute(const field_type<t_field_pos> &p_field);
+
+  template <std::size_t t_field_pos>
+  std::vector<rec_opt_ref> get_by_index(const std::regex &p_regex);
+
+  template <std::size_t t_field_pos>
+  std::vector<rec_opt_ref> get_by_attribute(const std::regex &p_regex);
 
   void erase_indexes(
       typename record::optional_indexes_iterators &p_optional_indexs_iterators);
@@ -679,6 +720,60 @@ multi_index<t_fields_definitions...>::
     rec_opt_ref &_rec_opt_ref{_ite->second};
     if (_rec_opt_ref.get().has_value()) {
       _result.push_back(_rec_opt_ref);
+    }
+  }
+  return _result;
+}
+
+template <cpt::field_definition... t_fields_definitions>
+  requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
+template <std::size_t t_field_pos>
+std::vector<typename multi_index<t_fields_definitions...>::rec_opt_ref>
+multi_index<t_fields_definitions...>::
+
+    get_by_attribute(const std::regex &p_regex) {
+
+  std::vector<rec_opt_ref> _res;
+  for (table_element &_table_element : m_table) {
+    if (_table_element.has_value()) {
+      field_getter<t_field_pos> _field_getter;
+      const object &_object{_table_element.value().get_object()};
+      const std::string &_value{_field_getter(_object)};
+      if (std::regex_search(_value, p_regex)) {
+        _res.push_back(rec_opt_ref{_table_element});
+      }
+    }
+  }
+  return _res;
+}
+
+template <cpt::field_definition... t_fields_definitions>
+  requires(trt::fields_definitions_are_compatible_v<t_fields_definitions...>)
+template <std::size_t t_field_pos>
+std::vector<typename multi_index<t_fields_definitions...>::rec_opt_ref>
+multi_index<t_fields_definitions...>::
+
+    get_by_index(const std::regex &p_regex) {
+
+  using index_iterator = index_iterator<t_field_pos>;
+
+  std::vector<rec_opt_ref> _result;
+
+  index<t_field_pos> &_index{std::get<t_field_pos>(m_indexes)};
+
+  for (index_iterator _ite{_index.first}; _ite != _index.end(); ++_ite) {
+    rec_opt_ref &_rec_opt_ref{_ite->second};
+    if (_rec_opt_ref.get().has_value()) {
+
+      const object &_object{_rec_opt_ref.get().value().get_object()};
+
+      field_getter<t_field_pos> _field_getter;
+
+      const std::string _value{_field_getter(_object)};
+
+      if (std::regex_search(_value, p_regex)) {
+        _result.push_back(_rec_opt_ref);
+      }
     }
   }
   return _result;
